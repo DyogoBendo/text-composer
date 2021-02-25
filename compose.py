@@ -14,12 +14,15 @@ import os
 import re
 import string
 import random
-
 from graph import Graph, Vertex
+
 
 def get_words_from_text(text_path):
     with open(text_path, 'r') as f:
         text = f.read()
+
+        text = re.sub(r'\[(.+)\]', ' ', text)  # replace [teaskldjasd] by ' '
+
         text = ' '.join(text.split())  # whitespace turns into space
         text = text.lower()
         text = text.translate(str.maketrans('', '', string.punctuation))  # replace any punctuation
@@ -53,8 +56,12 @@ def compose(g, words, length=50):
     return composition
 
 
-def main():
-    words = get_words_from_text("texts/hp_sorcerer_stone.txt")
+def main(artist):
+    words = []
+    for song_file in os.listdir(f"songs/{artist}"):
+        song_words = get_words_from_text(f"songs/{artist}/{song_file}")
+        words.extend(song_words)
+
     g = make_graph(words)
     composition = compose(g, words, 100)
 
@@ -62,4 +69,5 @@ def main():
 
 
 if __name__ == '__main__':
-    print(main())
+    artist = "avicii"
+    print(main(artist))
